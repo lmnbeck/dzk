@@ -88,9 +88,10 @@ class Stick(pygame.sprite.Sprite):
 		# 撞墙停止
 		if self.rect.left < 0:
 			self.rect.left = 0
+			speed = (0,speed[1])
 		if self.rect.right > self.width:
 			self.rect.right = self.width
-
+			speed = (0,speed[1])
 		self.rect = self.rect.move(speed)
 		return speed
 

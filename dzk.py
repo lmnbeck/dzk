@@ -2,30 +2,11 @@
 # -*- coding:utf-8 -*-
 
 from zk import *
+from funcs import *
 import pygame
 from pygame.locals import *
 import sys
 import random
-
-def collideDirectionJudge(spriteA,spriteB):
-    Colide_direct = 0
-    # A hit B from top
-    if abs(spriteA.getPosition()[1] - spriteB.getPosition()[0]) <= 5:
-        # print("ball.bottom in if =" ,ball.getPosition()[3])
-        Colide_direct = 1
-    # A hit B from bottom
-    elif abs(spriteA.getPosition()[0] - spriteB.getPosition()[1]) <= 5:
-        Colide_direct = 2
-
-    elif abs(spriteA.getPosition()[0] - spriteB.getPosition()[1]) > 5:
-        # A hit B from left
-        if spriteA.getPosition()[2]<spriteB.getPosition()[2]:
-            Colide_direct = 3 # or 4
-        # A hit B from right
-        else:
-            Colide_direct = 4
-
-    return Colide_direct
 
 SCREEN_WIDTH = 480
 SCREEN_HIGHT = 600
@@ -60,7 +41,7 @@ stick = Stick(stick_image,(140,400),bg_size)
 # 很多砖
 zkGroup = pygame.sprite.Group()
 j = 0
-for i in range(0,11):
+for i in range(0,12):
     zkColor = random.randint(1,3)
     j = i//(SCREEN_WIDTH//ZK_WIDTH)
     i = i%(SCREEN_WIDTH//ZK_WIDTH)
@@ -100,11 +81,11 @@ while True:
             # if(event.key == K_DOWN or event.key == K_s):
             #     direct_y = 1
             if(event.key == K_LEFT or event.key == K_a):
-                direct_x = (-3,0)
+                direct_x = (-1,0)
             if(event.key == K_RIGHT or event.key == K_d):
-                direct_x = (3,0)
-            if(event.key == K_SPACE):
-                ball_speed = [random.choice([-3,3]),-3]
+                direct_x = (1,0)
+            if(event.key == K_SPACE) and (ball_speed[0] == 0):
+                ball_speed = [random.randint(-3,3),-3]
                 
             if event.key == K_ESCAPE:
                 pygame.quit()
@@ -114,18 +95,17 @@ while True:
             keyPressed = False
             direct_x = (0,0)
     # 杆加速
-    # if keyPressed == True:
-    #     if direct_x[0] > 0:
-    #         direct_x = (direct_x[0]+1,0)
-    #     elif direct_x[0] < 0:
-    #         direct_x = (direct_x[0]-1,0)
+    if keyPressed == True:
+        if direct_x[0] > 0:
+            direct_x = (direct_x[0]+1,0)
+        elif direct_x[0] < 0:
+            direct_x = (direct_x[0]-1,0)
 
     # 杆移动
-    stick.move(direct_x)
+    direct_x = stick.move(direct_x)
 
     # 球设定
     Colide_direct = 0
-    #ball_speed = ball.move(ball_speed,0)
 
     # 碰撞检测
     # 碰砖
@@ -134,17 +114,31 @@ while True:
             print("peng zhao le!!!")
             Colide_direct = collideDirectionJudge(ball, each)
             zkGroup.remove(each)
-            # if zkGroup.sprites():
-            #     # continue
-            # else:
-            #     # win the game
 
     # 碰杆
     if pygame.sprite.collide_mask(ball, stick):
         Colide_direct = collideDirectionJudge(ball, stick)
-        pass
+        # 用杆加速
+        print("ball_speed", ball_speed)
+        print("direct_x", direct_x)
+        if (ball_speed[0] + direct_x[0]) > 10:
+            ball_speed = (10,ball_speed[1])
+        elif (ball_speed[0] + direct_x[0]) < -10:
+            ball_speed = (-10,ball_speed[1])
+        else:
+            ball_speed = (ball_speed[0] + direct_x[0],ball_speed[1])
+        print("after ball_speed", ball_speed)
+        print("after direct_x", direct_x)
 
     ball_speed = ball.move(ball_speed,Colide_direct)
+
+    # Game over
+    if zkGroup.sprites():
+        pass
+    else:
+        # win the game
+        pass
+
 
     # Draw
     screen.blit(background, (0, 0))

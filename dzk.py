@@ -8,7 +8,7 @@ from pygame.locals import *
 import sys
 import random
 
-SCREEN_WIDTH = 480
+SCREEN_WIDTH = 960
 SCREEN_HIGHT = 600
 ZK_WIDTH = 80
 ZK_HIGHT = 26
@@ -41,12 +41,12 @@ stick = Stick(stick_image,(140,400),bg_size)
 # 很多砖
 zkGroup = pygame.sprite.Group()
 j = 0
-for i in range(0,12):
+for i in range(0,24):
     zkColor = random.randint(1,3)
     j = i//(SCREEN_WIDTH//ZK_WIDTH)
     i = i%(SCREEN_WIDTH//ZK_WIDTH)
-    print('j=',j)
-    print('i=',i)
+    # print('j=',j)
+    # print('i=',i)
     if 1 == zkColor:
         bluezk = ZK(bluezk_image,(i*ZK_WIDTH,j*ZK_HIGHT),bg_size)
         zkGroup.add(bluezk)
@@ -62,6 +62,7 @@ for i in range(0,12):
 direct_x = (0,0)
 Colide_direct = 1
 keyPressed = False
+ballShooted = False
 
 # 杆坐标
 stick_x = screen.get_rect().centerx - stick.getImage().get_rect().width/2
@@ -84,7 +85,8 @@ while True:
                 direct_x = (-1,0)
             if(event.key == K_RIGHT or event.key == K_d):
                 direct_x = (1,0)
-            if(event.key == K_SPACE) and (ball_speed[0] == 0):
+            if(event.key == K_SPACE) and ballShooted == False:
+                ballShooted = True
                 ball_speed = [random.randint(-3,3),-3]
                 
             if event.key == K_ESCAPE:
@@ -103,6 +105,8 @@ while True:
 
     # 杆移动
     direct_x = stick.move(direct_x)
+    if ballShooted == False:
+        ball_speed = direct_x
 
     # 球设定
     Colide_direct = 0
@@ -119,16 +123,16 @@ while True:
     if pygame.sprite.collide_mask(ball, stick):
         Colide_direct = collideDirectionJudge(ball, stick)
         # 用杆加速
-        print("ball_speed", ball_speed)
-        print("direct_x", direct_x)
+        # print("ball_speed", ball_speed)
+        # print("direct_x", direct_x)
         if (ball_speed[0] + direct_x[0]) > 10:
             ball_speed = (10,ball_speed[1])
         elif (ball_speed[0] + direct_x[0]) < -10:
             ball_speed = (-10,ball_speed[1])
         else:
             ball_speed = (ball_speed[0] + direct_x[0],ball_speed[1])
-        print("after ball_speed", ball_speed)
-        print("after direct_x", direct_x)
+        # print("after ball_speed", ball_speed)
+        # print("after direct_x", direct_x)
 
     ball_speed = ball.move(ball_speed,Colide_direct)
 

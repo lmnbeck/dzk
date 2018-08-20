@@ -46,7 +46,9 @@ class Ball(pygame.sprite.Sprite):
 	def getImage(self):
 		return self.image
 	def getPosition(self):
-		return (self.rect.left,self.rect.top)
+		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def getLeftTop(self):
+		return (self.rect.left, self.rect.top)
 
 class ZK(pygame.sprite.Sprite):
 	"""docstring for zk"""
@@ -64,7 +66,9 @@ class ZK(pygame.sprite.Sprite):
 	def getImage(self):
 		return self.image
 	def getPosition(self):
-		return (self.rect.left,self.rect.top)
+		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def getLeftTop(self):
+		return (self.rect.left, self.rect.top)
 	def setVisable(self, visableFlag):
 		self.visable = visableFlag
 	def getVisable(self):
@@ -96,4 +100,6 @@ class Stick(pygame.sprite.Sprite):
 	def getImage(self):
 		return self.image
 	def getPosition(self):
-		return (self.rect.left,self.rect.top)
+		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def getLeftTop(self):
+		return (self.rect.left, self.rect.top)

@@ -18,6 +18,7 @@ ball_image = 'image/ball.png'
 bluezk_image = 'image/blueZK.png'
 pinkzk_image = 'image/pinkZK.png'
 yellowzk_image = 'image/yellowZK.png'
+bullet_image = 'image/bullet.png'
 
 # 初始化pygame，为使用硬件做准备
 pygame.init()
@@ -34,10 +35,11 @@ FPS = 60
 # 加载并转换图像
 background = pygame.image.load(background_image).convert()
 
-# 球和杆
+# Creat objects
 ball_speed = [0,0]
 ball = Ball(ball_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-40-30),bg_size)
-stick = Stick(stick_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-40),bg_size)
+stick = Stick(4,stick_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-40),bg_size)
+
 # 很多砖
 zkGroup = pygame.sprite.Group()
 j = 0
@@ -63,11 +65,13 @@ direct_x = (0,0)
 Colide_direct = 1
 keyPressed = False
 ballShooted = False
+bulletShot = False
 
 # 杆
 stickType = 0
-# Pills
+# Groups
 pill_group = pygame.sprite.Group()
+bullet_group = pygame.sprite.Group()
 
 while True:
     for event in pygame.event.get():
@@ -76,17 +80,14 @@ while True:
             sys.exit()
         if event.type == KEYDOWN:
             keyPressed = True
-            # if(event.key == K_UP or event.key == K_w):
-            #     direct_y = -1
-            # if(event.key == K_DOWN or event.key == K_s):
-            #     direct_y = 1
+
             if(event.key == K_LEFT or event.key == K_a):
                 direct_x = (-1,0)
             if(event.key == K_RIGHT or event.key == K_d):
                 direct_x = (1,0)
             if(event.key == K_SPACE) and ballShooted == False:
                 ballShooted = True
-                ball_speed = [random.randint(-3,3),-4]
+                ball_speed = [random.randint(-3,3),-3]
                 
             if event.key == K_ESCAPE:
                 pygame.quit()
@@ -95,6 +96,13 @@ while True:
         if event.type == KEYUP:
             keyPressed = False
             direct_x = (0,0)
+
+        if pygame.key.get_pressed()[K_j]:
+            bulletShot = True
+
+    # Draw background
+    screen.blit(background, (0, 0))
+
     # 杆加速
     if keyPressed == True:
         if direct_x[0] > 0:
@@ -102,6 +110,18 @@ while True:
         elif direct_x[0] < 0:
             direct_x = (direct_x[0]-1,0)
 
+    if bulletShot == True and stick.getStickType() == 0:
+        bulletShot = False
+        bullet = Bullet(bullet_image, stick.getLeftTop(), bg_size)
+        bullet_group.add(bullet)
+        
+    if bullet_group.sprites():
+        for each in bullet_group:
+            each.move()
+            if each.getLeftTop()[1] < 0:
+                bullet_group.remove(each)
+            else:
+                screen.blit(each.getImage(), each.getLeftTop())
 
 
     # 球设定
@@ -146,6 +166,7 @@ while True:
             else:
                 pass
             stick.setImage(stick_image)
+            stick.setStickType(each.getPillType())
             pill_group.remove(each)
             
     # 杆移动
@@ -168,7 +189,7 @@ while True:
         # print("after ball_speed", ball_speed)
         # print("after direct_x", direct_x)
 
-    ball_speed = ball.move(ball_speed,Colide_direct)
+    ball_speed = ball.move(ball_speed, Colide_direct)
 
     # Game over
     if zkGroup.sprites():
@@ -176,24 +197,19 @@ while True:
             ball.setLeftTop((stick.getLeftTop()[0], stick.getLeftTop()[1]-30))
             ballShooted = False
             ball_speed = direct_x
-
-    # Draw
-    screen.blit(background, (0, 0))
-    screen.blit(stick.getImage(), stick.getLeftTop())
-    screen.blit(ball.getImage(), ball.getLeftTop())
-    for each in pill_group:
-        screen.blit(each.getImage(), each.getLeftTop())
-    for each in zkGroup:
-        screen.blit(each.getImage(), each.getLeftTop())
-
-    if zkGroup.sprites():
-        pass
     else:
         # win the game
         myFont = pygame.font.SysFont('simhei',116)
         textSurface = myFont.render('爱你呦！', True, (0,0,0))
         screen.blit(textSurface, (SCREEN_WIDTH/2-116*1.5, SCREEN_HIGHT/2))
 
+    # Draw
+    screen.blit(stick.getImage(), stick.getLeftTop())
+    screen.blit(ball.getImage(), ball.getLeftTop())
+    for each in pill_group:
+        screen.blit(each.getImage(), each.getLeftTop())
+    for each in zkGroup:
+        screen.blit(each.getImage(), each.getLeftTop())
 
     # 刷新画面
     pygame.display.update()

@@ -72,13 +72,14 @@ class ZK(pygame.sprite.Sprite):
 
 class Stick(pygame.sprite.Sprite):
 	"""docstring for zk"""
-	def __init__(self, image, position, bg_size):
+	def __init__(self, stickType, image, position, bg_size):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(image).convert_alpha()
 		self.rect = self.image.get_rect()
 		self.rect.left, self.rect.top = position
 		self.width, self.height = bg_size[0], bg_size[1]
+		self.stickType = stickType
 		
 	def move(self, speed):
 		# 撞墙停止
@@ -100,6 +101,10 @@ class Stick(pygame.sprite.Sprite):
 		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
 	def getLeftTop(self):
 		return (self.rect.left, self.rect.top)
+	def setStickType(self,stickType):
+		self.stickType = stickType		
+	def getStickType(self):
+		return self.stickType
 
 class Pills(pygame.sprite.Sprite):
 	"""docstring for zk"""
@@ -125,3 +130,25 @@ class Pills(pygame.sprite.Sprite):
 		return (self.rect.left, self.rect.top)
 	def getPillType(self):
 		return self.pillType
+
+class Bullet(pygame.sprite.Sprite):
+	"""docstring for bullet"""
+	def __init__(self, image, position, bg_size):
+		pygame.sprite.Sprite.__init__(self)
+
+		self.image = pygame.image.load(image).convert_alpha()
+		self.rect = self.image.get_rect()
+		self.rect.left, self.rect.top = position
+		self.width, self.height = bg_size[0], bg_size[1]
+		
+	def move(self):
+		# 直落
+		self.rect = self.rect.move((0,-6))
+		# return speed
+
+	def getImage(self):
+		return self.image
+	def getPosition(self):
+		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def getLeftTop(self):
+		return (self.rect.left, self.rect.top)

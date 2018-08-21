@@ -36,8 +36,8 @@ background = pygame.image.load(background_image).convert()
 
 # 球和杆
 ball_speed = [0,0]
-ball = Ball(ball_image,(140,360),bg_size)
-stick = Stick(stick_image,(140,400),bg_size)
+ball = Ball(ball_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-200-30),bg_size)
+stick = Stick(stick_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-200),bg_size)
 # 很多砖
 zkGroup = pygame.sprite.Group()
 j = 0
@@ -64,11 +64,10 @@ Colide_direct = 1
 keyPressed = False
 ballShooted = False
 
-# 杆坐标
-stick_x = screen.get_rect().centerx - stick.getImage().get_rect().width/2
-stick_y = screen.get_rect().bottom - stick.getImage().get_rect().height
-print(stick_x,stick_y)
-stick_width = stick.getImage().get_rect().width
+# 杆
+stickType = 0
+# Pills
+pill_group = pygame.sprite.Group()
 
 while True:
     for event in pygame.event.get():
@@ -119,6 +118,28 @@ while True:
             Colide_direct = collideDirectionJudge(ball, each)
             zkGroup.remove(each)
 
+            # airbornSupply
+            supplyType = random.randint(0,5)
+            if supplyType == 0:
+                pill_image = 'image/redPill.png'
+            elif supplyType == 1:
+                pill_image = 'image/bluePill.png'
+            elif supplyType == 2:
+                pill_image = 'image/greenPill.png'
+            else:
+                pass
+            print('supplyType= ',supplyType)
+            if supplyType <=2:
+                DropPill = Pills(supplyType, pill_image, each.getLeftTop(), bg_size)
+                pill_group.add(DropPill)
+
+    # pill move
+    for each in pill_group:
+        each.move()
+        if each.getLeftTop()[1] >= SCREEN_HIGHT:
+            pill_group.remove(each)
+
+
     # 碰杆
     if pygame.sprite.collide_mask(ball, stick):
         Colide_direct = collideDirectionJudge(ball, stick)
@@ -148,6 +169,8 @@ while True:
     screen.blit(background, (0, 0))
     screen.blit(stick.getImage(), stick.getLeftTop())
     screen.blit(ball.getImage(), ball.getLeftTop())
+    for each in pill_group:
+        screen.blit(each.getImage(), each.getLeftTop())
     for each in zkGroup:
         screen.blit(each.getImage(), each.getLeftTop())
 

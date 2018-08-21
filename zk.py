@@ -104,3 +104,28 @@ class Stick(pygame.sprite.Sprite):
 		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
 	def getLeftTop(self):
 		return (self.rect.left, self.rect.top)
+
+class Pills(pygame.sprite.Sprite):
+	"""docstring for zk"""
+	def __init__(self, pillType, image, position, bg_size):
+		pygame.sprite.Sprite.__init__(self)
+
+		self.image = pygame.image.load(image).convert_alpha()
+		self.rect = self.image.get_rect()
+		self.rect.left, self.rect.top = position
+		self.width, self.height = bg_size[0], bg_size[1]
+		self.pillType = pillType
+		
+	def move(self):
+		# 直落
+		self.rect = self.rect.move((0,5))
+		# return speed
+
+	def getImage(self):
+		return self.image
+	def getPosition(self):
+		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def getLeftTop(self):
+		return (self.rect.left, self.rect.top)
+	def getPillType(self):
+		return self.pillType

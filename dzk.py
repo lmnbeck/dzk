@@ -13,7 +13,7 @@ SCREEN_HIGHT = 600
 ZK_WIDTH = 80
 ZK_HIGHT = 26
 background_image = 'image/bg.jpg'
-stick_image = 'image/head.jpg'
+stick_image = 'image/brownStick.png'
 ball_image = 'image/ball.png'
 bluezk_image = 'image/blueZK.png'
 pinkzk_image = 'image/pinkZK.png'
@@ -36,8 +36,8 @@ background = pygame.image.load(background_image).convert()
 
 # 球和杆
 ball_speed = [0,0]
-ball = Ball(ball_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-200-30),bg_size)
-stick = Stick(stick_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-200),bg_size)
+ball = Ball(ball_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-40-30),bg_size)
+stick = Stick(stick_image,(SCREEN_WIDTH/2,SCREEN_HIGHT-40),bg_size)
 # 很多砖
 zkGroup = pygame.sprite.Group()
 j = 0
@@ -86,7 +86,7 @@ while True:
                 direct_x = (1,0)
             if(event.key == K_SPACE) and ballShooted == False:
                 ballShooted = True
-                ball_speed = [random.randint(-3,3),-3]
+                ball_speed = [random.randint(-3,3),-4]
                 
             if event.key == K_ESCAPE:
                 pygame.quit()
@@ -102,10 +102,7 @@ while True:
         elif direct_x[0] < 0:
             direct_x = (direct_x[0]-1,0)
 
-    # 杆移动
-    direct_x = stick.move(direct_x)
-    if ballShooted == False:
-        ball_speed = direct_x
+
 
     # 球设定
     Colide_direct = 0
@@ -119,7 +116,7 @@ while True:
             zkGroup.remove(each)
 
             # airbornSupply
-            supplyType = random.randint(0,5)
+            supplyType = random.randint(0,2)
             if supplyType == 0:
                 pill_image = 'image/redPill.png'
             elif supplyType == 1:
@@ -138,7 +135,23 @@ while True:
         each.move()
         if each.getLeftTop()[1] >= SCREEN_HIGHT:
             pill_group.remove(each)
-
+        # pill hit stick
+        if pygame.sprite.collide_mask(each, stick):
+            if each.getPillType() == 0:
+                stick_image = 'image/redStick.png'
+            elif each.getPillType() == 1:
+                stick_image = 'image/blueStick.png'
+            elif each.getPillType() == 2:
+                stick_image = 'image/greenStick.png'
+            else:
+                pass
+            stick.setImage(stick_image)
+            pill_group.remove(each)
+            
+    # 杆移动
+    direct_x = stick.move(direct_x)
+    if ballShooted == False:
+        ball_speed = direct_x
 
     # 碰杆
     if pygame.sprite.collide_mask(ball, stick):
@@ -159,11 +172,10 @@ while True:
 
     # Game over
     if zkGroup.sprites():
-        pass
-    else:
-        # win the game
-        pass
-
+        if (ball.getPosition()[0] > SCREEN_HIGHT):
+            ball.setLeftTop((stick.getLeftTop()[0], stick.getLeftTop()[1]-30))
+            ballShooted = False
+            ball_speed = direct_x
 
     # Draw
     screen.blit(background, (0, 0))
@@ -173,6 +185,15 @@ while True:
         screen.blit(each.getImage(), each.getLeftTop())
     for each in zkGroup:
         screen.blit(each.getImage(), each.getLeftTop())
+
+    if zkGroup.sprites():
+        pass
+    else:
+        # win the game
+        myFont = pygame.font.SysFont('simhei',116)
+        textSurface = myFont.render('爱你呦！', True, (0,0,0))
+        screen.blit(textSurface, (SCREEN_WIDTH/2-116*1.5, SCREEN_HIGHT/2))
+
 
     # 刷新画面
     pygame.display.update()

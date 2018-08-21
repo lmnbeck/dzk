@@ -34,19 +34,15 @@ class Ball(pygame.sprite.Sprite):
 		if direct == 4:	#右
 			speed = (-speed[0], speed[1])
 
-
 		self.rect = self.rect.move(speed)
-
 		return speed
-
-
-	def collide(self):
-		pass
 
 	def getImage(self):
 		return self.image
 	def getPosition(self):
 		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
+	def setLeftTop(self, position):	
+		self.rect.left, self.rect.top = position
 	def getLeftTop(self):
 		return (self.rect.left, self.rect.top)
 
@@ -95,9 +91,9 @@ class Stick(pygame.sprite.Sprite):
 		self.rect = self.rect.move(speed)
 		return speed
 
-	def collide(self):
-		pass
-
+	def setImage(self, image):
+		self.image = pygame.image.load(image).convert_alpha()
+		# self.rect = self.image.get_rect()
 	def getImage(self):
 		return self.image
 	def getPosition(self):

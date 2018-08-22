@@ -3,7 +3,7 @@ import pygame
 import math
 import sys
 from pygame.locals import *
-from random import *
+import random
 
 class Ball(pygame.sprite.Sprite):
 	def __init__(self, image, position, bg_size):
@@ -152,3 +152,30 @@ class Bullet(pygame.sprite.Sprite):
 		return (self.rect.top, self.rect.bottom, self.rect.left, self.rect.right)
 	def getLeftTop(self):
 		return (self.rect.left, self.rect.top)
+
+# class ZKGroup(pygame.sprite.Group):
+# 	"""docstring for ZKGroup"""
+# 	def __init__(self):
+# 		super(ZKGroup, self).__init__()
+	
+# 	def remove(self, member):
+# 		pygame.sprite.Group.remove(member)
+
+# 		# airbornSupply
+# 		supplyType = random.randint(0,6)
+# 		# supplyType = 2
+# 		if supplyType == 0:
+# 			pill_image = 'image/redPill.png'
+# 		elif supplyType == 1:
+# 			pill_image = 'image/bluePill.png'
+# 		elif supplyType == 2:
+# 			pill_image = 'image/greenPill.png'
+# 		else:
+# 			pass
+# 		# print('supplyType= ',supplyType)
+# 		if supplyType <=2:
+# 			DropPill = Pills(supplyType, pill_image, member.getLeftTop(), bg_size)
+#         return DropPill
+#         #     pill_group.add(DropPill)
+
+		

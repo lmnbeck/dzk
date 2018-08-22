@@ -120,7 +120,7 @@ while True:
             direct_x = (direct_x[0]+1,0)
         elif direct_x[0] < 0:
             direct_x = (direct_x[0]-1,0)
-
+    # Creat bullets
     if bulletShot == True and stick.getStickType() == 0 and canShot == True:
         bulletShot = False
         canShot = False
@@ -132,10 +132,11 @@ while True:
             each.move()
             if each.getLeftTop()[1] < 0:
                 bullet_group.remove(each)
-
             else:
-                pygame.sprite.spritecollide(each, zkGroup, True)
-                screen.blit(each.getImage(), each.getLeftTop())
+                if pygame.sprite.spritecollide(each, zkGroup, True):
+                    bullet_group.remove(each)
+                else:
+                    screen.blit(each.getImage(), each.getLeftTop())
 
 
     # 球设定
@@ -150,8 +151,8 @@ while True:
             zkGroup.remove(each)
 
             # airbornSupply
-            supplyType = random.randint(0,6)
-            # supplyType = 2
+            # supplyType = random.randint(0,6)
+            supplyType = 0
             if supplyType == 0:
                 pill_image = 'image/redPill.png'
             elif supplyType == 1:
